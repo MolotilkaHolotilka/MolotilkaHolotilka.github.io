@@ -1,9 +1,5 @@
-import type { NextConfig } from 'next';
+import { createNextConfig } from './githubPagesConfig';
 
-const isGitHubPages = process.env.GITHUB_PAGES === 'true';
-
-const nextConfig: NextConfig = isGitHubPages
-  ? { output: 'export', trailingSlash: true }
-  : {};
+const nextConfig = createNextConfig(process.env.GITHUB_PAGES === 'true');
 
 export default nextConfig;

@@ -1,22 +1,15 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
-
-const loadConfig = async (githubPages: string) => {
-  vi.resetModules();
-  vi.stubEnv('GITHUB_PAGES', githubPages);
-  return (await import('../next.config')).default;
-};
-
-afterEach(() => vi.unstubAllEnvs());
+import { describe, expect, it } from 'vitest';
+import { createNextConfig } from '../githubPagesConfig';
 
 describe('GitHub Pages build configuration', () => {
-  it('exports static files only for the dedicated Pages build', async () => {
-    const pagesConfig = await loadConfig('true');
+  it('exports static files only for the dedicated Pages build', () => {
+    const pagesConfig = createNextConfig(true);
     expect(pagesConfig.output).toBe('export');
     expect(pagesConfig.trailingSlash).toBe(true);
   });
 
-  it('preserves the Vinext build defaults otherwise', async () => {
-    const sitesConfig = await loadConfig('false');
+  it('preserves the Vinext build defaults otherwise', () => {
+    const sitesConfig = createNextConfig(false);
     expect(sitesConfig.output).toBeUndefined();
     expect(sitesConfig.trailingSlash).toBeUndefined();
   });
