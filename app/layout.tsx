@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Caveat, Permanent_Marker } from 'next/font/google';
 import './globals.css';
 
@@ -8,7 +8,6 @@ const permanentMarker = Permanent_Marker({ variable: '--font-marker', subsets: [
 export const metadata: Metadata = {
   title: 'Илья Ященко — инженер AI-продуктов',
   description: 'Личная записная книжка Ильи Ященко: agent systems, автоматизации, игры и выпущенные цифровые продукты.',
-  themeColor: '#756f65',
   openGraph: {
     title: 'Илья Ященко — инженер AI-продуктов',
     description: 'Семь проектов на стыке AI, автоматизации, игр и реального мира.',
@@ -20,6 +19,10 @@ export const metadata: Metadata = {
     title: 'Илья Ященко — инженер AI-продуктов',
     description: 'Личная записная книжка инженера и разработчика.',
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: '#756f65',
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
