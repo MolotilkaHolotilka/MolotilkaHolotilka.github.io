@@ -32,6 +32,21 @@ test('cover portrait and frameless stickers match the approved composition', asy
   await expect(portrait).toBeVisible();
   await expect(portrait).toHaveAttribute('src', '/ilya-cover-cutout.png');
 
+  const geometry = await page.evaluate(() => {
+    const cover = document.querySelector<HTMLElement>('.notebook-cover');
+    const coverPortrait = document.querySelector<HTMLElement>('.cover-portrait');
+    if (!cover || !coverPortrait) throw new Error('Cover geometry is unavailable');
+    const coverRect = cover.getBoundingClientRect();
+    const portraitRect = coverPortrait.getBoundingClientRect();
+    return {
+      heightRatio: portraitRect.height / coverRect.height,
+      centerRatio: (portraitRect.left + portraitRect.width / 2 - coverRect.left) / coverRect.width,
+      mobile: innerWidth <= 760,
+    };
+  });
+  expect(geometry.heightRatio).toBeCloseTo(geometry.mobile ? 1.56 : 2.34, 1);
+  expect(geometry.centerRatio).toBeCloseTo(0.75, 1);
+
   for (const selector of ['.cover-sticker', '.project-sticker', '.project-count-sticker', '.contact-sticker']) {
     await expect.poll(() => page.locator(selector).first().evaluate(element => getComputedStyle(element).borderTopWidth)).toBe('0px');
   }
