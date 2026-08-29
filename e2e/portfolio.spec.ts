@@ -47,7 +47,7 @@ test('cover portrait and frameless stickers match the approved composition', asy
 
   const portrait = page.getByRole('img', { name: 'Илья Ященко' });
   await expect(portrait).toBeVisible();
-  await expect(portrait).toHaveAttribute('src', '/ilya-cover-cutout-v2.png');
+  await expect(portrait).toHaveAttribute('src', '/ilya-cover-cutout-v3.png');
 
   const geometry = await page.evaluate(() => {
     const cover = document.querySelector<HTMLElement>('.notebook-cover');
