@@ -24,13 +24,30 @@ test('direct locale routes render the complete project index', async ({ page }) 
   await expect(page.getByRole('heading', { name: 'Things I have built' })).toBeVisible();
 });
 
+test('project cards form one horizontally moving carousel', async ({ page }) => {
+  await page.goto('/ru#projects');
+  await waitForApp(page);
+  const carousel = page.getByLabel('Карусель проектов');
+  await expect(carousel).toBeVisible();
+  await expect(carousel.locator('[data-project-id]')).toHaveCount(7);
+  await expect.poll(() => carousel.locator('.project-carousel__track').evaluate(element => getComputedStyle(element).animationName)).not.toBe('none');
+});
+
+test('content factory case uses the generated conveyor artwork', async ({ page }) => {
+  await page.goto('/ru#project-case');
+  await waitForApp(page);
+  const artwork = page.getByRole('img', { name: 'Конвейер превращает идею в пост, короткое видео и AI-видео' });
+  await expect(artwork).toBeVisible();
+  await expect(artwork).toHaveAttribute('src', '/content-factory-conveyor.png');
+});
+
 test('cover portrait and frameless stickers match the approved composition', async ({ page }) => {
   await page.goto('/ru');
   await waitForApp(page);
 
   const portrait = page.getByRole('img', { name: 'Илья Ященко' });
   await expect(portrait).toBeVisible();
-  await expect(portrait).toHaveAttribute('src', '/ilya-cover-cutout.png');
+  await expect(portrait).toHaveAttribute('src', '/ilya-cover-cutout-v2.png');
 
   const geometry = await page.evaluate(() => {
     const cover = document.querySelector<HTMLElement>('.notebook-cover');
@@ -65,7 +82,7 @@ for (const [id, title] of cases) {
   test(`project sticker ${id} opens its case inline`, async ({ page }) => {
     await page.goto('/ru#projects');
     await waitForApp(page);
-    await page.locator(`[data-project-id="${id}"]`).click();
+    await page.locator(`[data-project-id="${id}"]`).click({ force: true });
     await expect(page.locator('#selected-case-title')).toHaveText(title);
     await expect(page.locator('#selected-case-title')).toBeFocused();
   });
@@ -74,7 +91,7 @@ for (const [id, title] of cases) {
 test('language switch preserves the selected project and stores locale', async ({ page }) => {
   await page.goto('/ru#projects');
   await waitForApp(page);
-  await page.locator('[data-project-id="calibry-games"]').click();
+  await page.locator('[data-project-id="calibry-games"]').click({ force: true });
   await expect(page.locator('#selected-case-title')).toHaveText('Calibry Games');
   await page.getByRole('button', { name: 'Switch to English' }).click();
   await expect(page).toHaveURL(/\/en#projects$/);
