@@ -47,6 +47,15 @@ test('cover portrait and frameless stickers match the approved composition', asy
   expect(geometry.heightRatio).toBeCloseTo(geometry.mobile ? 1.56 : 2.34, 1);
   expect(geometry.centerRatio).toBeCloseTo(0.75, 1);
 
+  const layerOrder = await page.evaluate(() => ({
+    title: Number.parseInt(getComputedStyle(document.querySelector('#cover-title')!).zIndex, 10),
+    portrait: Number.parseInt(getComputedStyle(document.querySelector('.cover-portrait')!).zIndex, 10),
+    kicker: Number.parseInt(getComputedStyle(document.querySelector('.cover-kicker')!).zIndex, 10),
+    taganrog: Number.parseInt(getComputedStyle(document.querySelector('.cover-sticker--taganrog')!).zIndex, 10),
+  }));
+  expect(layerOrder.title).toBeLessThan(layerOrder.portrait);
+  expect(layerOrder.taganrog).toBeLessThan(layerOrder.kicker);
+
   for (const selector of ['.cover-sticker', '.project-sticker', '.project-count-sticker', '.contact-sticker']) {
     await expect.poll(() => page.locator(selector).first().evaluate(element => getComputedStyle(element).borderTopWidth)).toBe('0px');
   }
